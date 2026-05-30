@@ -1,14 +1,19 @@
+import { motion } from 'framer-motion';
+
 interface Props {
-  size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
-const sizes = { sm: 'h-20', md: 'h-32', lg: 'h-[200px]' };
-
-export function SkeletonCard({ size = 'md', className = '' }: Props) {
+export function SkeletonCard({ className = '' }: Props) {
   return (
-    <div
-      className={`animate-pulse rounded-xl bg-zinc-800 ${sizes[size]} ${className}`}
+    <motion.div
+      className={`bg-zinc-800 rounded-xl ${className}`}
+      animate={{ opacity: [0.5, 1, 0.5] }}
+      transition={{
+        repeat: Infinity,
+        duration: 1.5,
+        ease: 'easeInOut',
+      }}
     />
   );
 }

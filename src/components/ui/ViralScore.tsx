@@ -6,63 +6,85 @@ interface Props {
 }
 
 const sizeMap = {
-  sm: { px: 48, stroke: 4, font: 'text-sm' },
-  md: { px: 96, stroke: 6, font: 'text-2xl' },
-  lg: { px: 160, stroke: 8, font: 'text-5xl' },
+  sm: 48,
+  md: 96,
+  lg: 160,
 };
 
-function scoreColor(score: number) {
+function getStrokeColor(score: number) {
   if (score < 40) return '#EF4444';
   if (score < 70) return '#F59E0B';
   if (score < 85) return '#22C55E';
-  return '#A3E635';
+  return '#7C3AED';
+}
+
+function getScoreColorClass(score: number) {
+  if (score < 40) return 'text-red-500';
+  if (score < 70) return 'text-amber-500';
+  if (score < 85) return 'text-green-500';
+  return 'text-violet-500';
 }
 
 export function ViralScore({ score, size = 'md' }: Props) {
-  const { px, stroke, font } = sizeMap[size];
-  const radius = (px - stroke) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
-  const color = scoreColor(score);
+  const sizePx = sizeMap[size];
+  const strokeColor = getStrokeColor(score);
+  const scoreColorClass = getScoreColorClass(score);
 
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative" style={{ width: px, height: px }}>
-        <svg width={px} height={px} className="-rotate-90">
-          <circle
-            cx={px / 2}
-            cy={px / 2}
-            r={radius}
-            fill="none"
-            stroke="#27272A"
-            strokeWidth={stroke}
-          />
-          <motion.circle
-            cx={px / 2}
-            cy={px / 2}
-            r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth={stroke}
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            initial={{ strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1.2, ease: 'easeOut' }}
-          />
-        </svg>
-        <div
-          className={`absolute inset-0 flex items-center justify-center font-mono font-bold ${font}`}
-          style={{ color }}
+  const content = (
+    <div style={{ width: sizePx, height: sizePx }} className="relative flex items-center justify-center">
+      <svg width={sizePx} height={sizePx} viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)' }}>
+        {/* trilho de fundo */}
+        <circle cx="50" cy="50" r="42" fill="none" stroke="#27272A" strokeWidth="8" />
+
+        {/* arco animado */}
+        <motion.circle
+          cx="50"
+          cy="50"
+          r="42"
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray={`${2 * Math.PI * 42}`}
+          initial={{ strokeDashoffset: 2 * Math.PI * 42 }}
+          animate={{ strokeDashoffset: 2 * Math.PI * 42 * (1 - score / 100) }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
+        />
+      </svg>
+
+      {/* número centralizado */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span
+          className={`font-mono font-bold ${
+            size === 'lg'
+              ? 'text-4xl'
+              : size === 'md'
+              ? 'text-xl'
+              : 'text-xs'
+          } ${scoreColorClass}`}
         >
           {score}
-        </div>
-      </div>
-      {size === 'lg' && (
-        <span className="text-xs uppercase tracking-widest text-muted-foreground">
-          Score de Viralização
         </span>
-      )}
+
+        {size === 'lg' && (
+          <span className="text-xs text-zinc-400 mt-0.5">
+            Score
+          </span>
+        )}
+      </div>
     </div>
   );
+
+  if (score >= 85) {
+    return (
+      <motion.div
+        animate={{ opacity: [0.7, 1, 0.7] }}
+        transition={{ repeat: Infinity, duration: 2 }}
+      >
+        {content}
+      </motion.div>
+    );
+  }
+
+  return content;
 }
