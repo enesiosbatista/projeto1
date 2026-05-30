@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as AnalyzeRouteImport } from './routes/analyze'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultIdRouteImport } from './routes/result.$id'
@@ -20,9 +22,19 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnectRoute = ConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyzeRoute = AnalyzeRouteImport.update({
@@ -44,14 +56,18 @@ const ResultIdRoute = ResultIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analyze': typeof AnalyzeRoute
+  '/connect': typeof ConnectRoute
   '/dashboard': typeof DashboardRoute
+  '/insights': typeof InsightsRoute
   '/profile': typeof ProfileRoute
   '/result/$id': typeof ResultIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analyze': typeof AnalyzeRoute
+  '/connect': typeof ConnectRoute
   '/dashboard': typeof DashboardRoute
+  '/insights': typeof InsightsRoute
   '/profile': typeof ProfileRoute
   '/result/$id': typeof ResultIdRoute
 }
@@ -59,22 +75,48 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analyze': typeof AnalyzeRoute
+  '/connect': typeof ConnectRoute
   '/dashboard': typeof DashboardRoute
+  '/insights': typeof InsightsRoute
   '/profile': typeof ProfileRoute
   '/result/$id': typeof ResultIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analyze' | '/dashboard' | '/profile' | '/result/$id'
+  fullPaths:
+    | '/'
+    | '/analyze'
+    | '/connect'
+    | '/dashboard'
+    | '/insights'
+    | '/profile'
+    | '/result/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analyze' | '/dashboard' | '/profile' | '/result/$id'
-  id: '__root__' | '/' | '/analyze' | '/dashboard' | '/profile' | '/result/$id'
+  to:
+    | '/'
+    | '/analyze'
+    | '/connect'
+    | '/dashboard'
+    | '/insights'
+    | '/profile'
+    | '/result/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/analyze'
+    | '/connect'
+    | '/dashboard'
+    | '/insights'
+    | '/profile'
+    | '/result/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyzeRoute: typeof AnalyzeRoute
+  ConnectRoute: typeof ConnectRoute
   DashboardRoute: typeof DashboardRoute
+  InsightsRoute: typeof InsightsRoute
   ProfileRoute: typeof ProfileRoute
   ResultIdRoute: typeof ResultIdRoute
 }
@@ -88,11 +130,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connect': {
+      id: '/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof ConnectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analyze': {
@@ -122,7 +178,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyzeRoute: AnalyzeRoute,
+  ConnectRoute: ConnectRoute,
   DashboardRoute: DashboardRoute,
+  InsightsRoute: InsightsRoute,
   ProfileRoute: ProfileRoute,
   ResultIdRoute: ResultIdRoute,
 }
