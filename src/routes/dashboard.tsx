@@ -1,30 +1,30 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { useMemo, useState } from 'react';
-import { ChevronDown, SearchX, Sparkles } from 'lucide-react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { AnalysisCard } from '@/components/features/AnalysisCard';
-import { mockAnalysisList, mockUser } from '@/lib/mockData';
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { ChevronDown, SearchX, Sparkles } from "lucide-react";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { AnalysisCard } from "@/components/features/AnalysisCard";
+import { mockAnalysisList, mockUser } from "@/lib/mockData";
 
-export const Route = createFileRoute('/dashboard')({
-  head: () => ({ meta: [{ title: 'Dashboard — ViralMind AI' }] }),
+export const Route = createFileRoute("/dashboard")({
+  head: () => ({ meta: [{ title: "Dashboard — ViralMind AI" }] }),
   component: DashboardPage,
 });
 
-type Filter = 'all' | 'viral' | 'flop';
-type Sort = 'recent' | 'high' | 'low';
+type Filter = "all" | "viral" | "flop";
+type Sort = "recent" | "high" | "low";
 
 const formatDate = () => {
-  return new Date().toLocaleDateString('pt-BR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  return new Date().toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   });
 };
 
 function DashboardPage() {
-  const [filter, setFilter] = useState<Filter>('all');
-  const [sort, setSort] = useState<Sort>('recent');
+  const [filter, setFilter] = useState<Filter>("all");
+  const [sort, setSort] = useState<Sort>("recent");
   const [favorites, setFavorites] = useState<Set<string>>(
     () => new Set([mockAnalysisList[0].id, mockAnalysisList[2].id]),
   );
@@ -33,10 +33,10 @@ function DashboardPage() {
 
   const list = useMemo(() => {
     let arr = mockAnalysisList.filter((a) => !deleted.has(a.id));
-    if (filter === 'viral') arr = arr.filter((a) => a.viral_score >= 70);
-    if (filter === 'flop') arr = arr.filter((a) => a.viral_score < 70);
-    if (sort === 'high') arr = [...arr].sort((a, b) => b.viral_score - a.viral_score);
-    if (sort === 'low') arr = [...arr].sort((a, b) => a.viral_score - b.viral_score);
+    if (filter === "viral") arr = arr.filter((a) => a.viral_score >= 70);
+    if (filter === "flop") arr = arr.filter((a) => a.viral_score < 70);
+    if (sort === "high") arr = [...arr].sort((a, b) => b.viral_score - a.viral_score);
+    if (sort === "low") arr = [...arr].sort((a, b) => a.viral_score - b.viral_score);
     return arr;
   }, [filter, sort, deleted]);
 
@@ -48,12 +48,15 @@ function DashboardPage() {
   const toggleFav = (id: string) =>
     setFavorites((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
 
-  const remove = (id: string) =>
-    setDeleted((prev) => new Set(prev).add(id));
+  const remove = (id: string) => setDeleted((prev) => new Set(prev).add(id));
 
   const creditsTotal = 5;
   const creditPct = (mockUser.credits / creditsTotal) * 100;
@@ -63,9 +66,7 @@ function DashboardPage() {
       <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6 md:py-8">
         {/* Header */}
         <header>
-          <h1 className="text-2xl font-bold text-white md:text-3xl">
-            Olá, {mockUser.username} 👋
-          </h1>
+          <h1 className="text-2xl font-bold text-white md:text-3xl">Olá, {mockUser.username} 👋</h1>
           <p className="mt-1 text-sm capitalize text-zinc-400">{formatDate()}</p>
         </header>
 
@@ -89,9 +90,7 @@ function DashboardPage() {
           <div className="flex flex-col justify-between rounded-xl border border-primary/20 bg-zinc-900/60 p-4">
             <div>
               <p className="text-sm font-semibold text-primary">Pro — R$47/mês</p>
-              <p className="mt-1 text-xs text-zinc-400">
-                50 análises/mês + prioridade na fila
-              </p>
+              <p className="mt-1 text-xs text-zinc-400">50 análises/mês + prioridade na fila</p>
             </div>
             <button className="mt-3 inline-flex items-center justify-center gap-1 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90">
               <Sparkles size={14} /> Fazer Upgrade →
@@ -104,9 +103,9 @@ function DashboardPage() {
           <div className="flex flex-wrap items-center gap-2">
             {(
               [
-                { id: 'all', label: 'Todos' },
-                { id: 'viral', label: 'Viralizou ✅' },
-                { id: 'flop', label: 'Não viralizou ⚠️' },
+                { id: "all", label: "Todos" },
+                { id: "viral", label: "Viralizou ✅" },
+                { id: "flop", label: "Não viralizou ⚠️" },
               ] as { id: Filter; label: string }[]
             ).map((f) => (
               <button
@@ -114,8 +113,8 @@ function DashboardPage() {
                 onClick={() => setFilter(f.id)}
                 className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                   filter === f.id
-                    ? 'border-primary bg-primary/20 text-white'
-                    : 'border-zinc-700 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200'
+                    ? "border-primary bg-primary/20 text-white"
+                    : "border-zinc-700 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200"
                 }`}
               >
                 {f.label}
@@ -177,7 +176,7 @@ function DashboardPage() {
             </span>
             <ChevronDown
               size={18}
-              className={`text-zinc-400 transition ${favOpen ? 'rotate-180' : ''}`}
+              className={`text-zinc-400 transition ${favOpen ? "rotate-180" : ""}`}
             />
           </button>
           {favOpen && (

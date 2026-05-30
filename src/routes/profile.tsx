@@ -1,18 +1,18 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { mockUser } from '@/lib/mockData';
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { mockUser } from "@/lib/mockData";
 
-export const Route = createFileRoute('/profile')({
-  head: () => ({ meta: [{ title: 'Perfil — ViralMind AI' }] }),
+export const Route = createFileRoute("/profile")({
+  head: () => ({ meta: [{ title: "Perfil — ViralMind AI" }] }),
   component: ProfilePage,
 });
 
 function ProfilePage() {
   const initials = mockUser.username
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
-    .join('');
+    .join("");
   const total = 5;
   const pct = (mockUser.credits / total) * 100;
 

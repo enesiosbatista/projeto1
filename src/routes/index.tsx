@@ -1,6 +1,6 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Link2,
   TrendingUp,
@@ -10,22 +10,22 @@ import {
   Anchor,
   BarChart2,
   ArrowRight,
-} from 'lucide-react';
-import type { Platform } from '@/types/database';
+} from "lucide-react";
+import type { Platform } from "@/types/database";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: 'ViralMind AI — Descubra por que vídeos viralizam' },
+      { title: "ViralMind AI — Descubra por que vídeos viralizam" },
       {
-        name: 'description',
+        name: "description",
         content:
-          'Cole o link de qualquer vídeo e a IA analisa em segundos por que viralizou — ou o que falta para viralizar.',
+          "Cole o link de qualquer vídeo e a IA analisa em segundos por que viralizou — ou o que falta para viralizar.",
       },
-      { property: 'og:title', content: 'ViralMind AI' },
+      { property: "og:title", content: "ViralMind AI" },
       {
-        property: 'og:description',
-        content: 'Análise viral de vídeos com IA em segundos.',
+        property: "og:description",
+        content: "Análise viral de vídeos com IA em segundos.",
       },
     ],
   }),
@@ -33,36 +33,65 @@ export const Route = createFileRoute('/')({
 });
 
 const platformOptions: { value: Platform; emoji: string; label: string }[] = [
-  { value: 'youtube', emoji: '🎬', label: 'YouTube' },
-  { value: 'shorts', emoji: '📱', label: 'Shorts' },
-  { value: 'tiktok', emoji: '🎵', label: 'TikTok' },
-  { value: 'reels', emoji: '📸', label: 'Reels' },
+  { value: "youtube", emoji: "🎬", label: "YouTube" },
+  { value: "shorts", emoji: "📱", label: "Shorts" },
+  { value: "tiktok", emoji: "🎵", label: "TikTok" },
+  { value: "reels", emoji: "📸", label: "Reels" },
 ];
 
 const features = [
-  { icon: TrendingUp, color: 'text-primary', title: 'Score de Viralização', desc: 'Nota de 0 a 100 baseada em hook, retenção, CTA e potencial de compartilhamento.' },
-  { icon: Zap, color: 'text-amber-400', title: 'Por que viralizou', desc: 'Análise contextual dos gatilhos mentais e padrões narrativos que prenderam a audiência.' },
-  { icon: RefreshCw, color: 'text-secondary', title: 'Recriar sem Copiar', desc: 'Gera um roteiro original com a mesma estrutura viral, com risco de plágio abaixo de 10%.' },
-  { icon: Mic, color: 'text-primary', title: 'Transcrição IA', desc: 'Transcrição automática com marcação de hooks, CTAs e momentos de alta retenção.' },
-  { icon: Anchor, color: 'text-amber-400', title: 'Sugestão de Hook', desc: 'Três aberturas alternativas otimizadas para os primeiros 3 segundos do vídeo.' },
-  { icon: BarChart2, color: 'text-secondary', title: 'Análise de Retenção', desc: 'Curva estimada de retenção segundo a segundo, com pontos críticos destacados.' },
+  {
+    icon: TrendingUp,
+    color: "text-primary",
+    title: "Score de Viralização",
+    desc: "Nota de 0 a 100 baseada em hook, retenção, CTA e potencial de compartilhamento.",
+  },
+  {
+    icon: Zap,
+    color: "text-amber-400",
+    title: "Por que viralizou",
+    desc: "Análise contextual dos gatilhos mentais e padrões narrativos que prenderam a audiência.",
+  },
+  {
+    icon: RefreshCw,
+    color: "text-secondary",
+    title: "Recriar sem Copiar",
+    desc: "Gera um roteiro original com a mesma estrutura viral, com risco de plágio abaixo de 10%.",
+  },
+  {
+    icon: Mic,
+    color: "text-primary",
+    title: "Transcrição IA",
+    desc: "Transcrição automática com marcação de hooks, CTAs e momentos de alta retenção.",
+  },
+  {
+    icon: Anchor,
+    color: "text-amber-400",
+    title: "Sugestão de Hook",
+    desc: "Três aberturas alternativas otimizadas para os primeiros 3 segundos do vídeo.",
+  },
+  {
+    icon: BarChart2,
+    color: "text-secondary",
+    title: "Análise de Retenção",
+    desc: "Curva estimada de retenção segundo a segundo, com pontos críticos destacados.",
+  },
 ];
 
 function LandingPage() {
   const navigate = useNavigate();
-  const [url, setUrl] = useState('');
-  const [platform, setPlatform] = useState<Platform>('youtube');
+  const [url, setUrl] = useState("");
+  const [platform, setPlatform] = useState<Platform>("youtube");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!url.trim()) return;
     try {
-      localStorage.setItem(
-        'viralmind:pending',
-        JSON.stringify({ url, platform }),
-      );
-    } catch {}
-    navigate({ to: '/analyze' });
+      localStorage.setItem("viralmind:pending", JSON.stringify({ url, platform }));
+    } catch (e) {
+      console.warn("localStorage is not available", e);
+    }
+    navigate({ to: "/analyze" });
   };
 
   return (
@@ -73,10 +102,7 @@ function LandingPage() {
           <Zap className="h-5 w-5 text-primary" fill="currentColor" />
           <span className="text-base font-bold text-primary">ViralMind</span>
         </div>
-        <a
-          href="/analyze"
-          className="text-sm font-medium text-zinc-400 hover:text-zinc-200"
-        >
+        <a href="/analyze" className="text-sm font-medium text-zinc-400 hover:text-zinc-200">
           Entrar
         </a>
       </header>
@@ -93,13 +119,12 @@ function LandingPage() {
         </motion.div>
 
         <h1 className="mt-6 text-5xl font-black tracking-tight md:text-7xl">
-          Descubra por que{' '}
-          <span className="text-gradient-viral">vídeos viralizam</span>
+          Descubra por que <span className="text-gradient-viral">vídeos viralizam</span>
         </h1>
 
         <p className="mx-auto mt-5 max-w-xl text-lg text-zinc-400">
-          Cole o link de qualquer vídeo e a IA analisa em segundos por que
-          viralizou — ou o que falta para viralizar.
+          Cole o link de qualquer vídeo e a IA analisa em segundos por que viralizou — ou o que
+          falta para viralizar.
         </p>
 
         <form
@@ -143,12 +168,12 @@ function LandingPage() {
         {/* Social proof */}
         <div className="mt-12 flex items-center justify-center gap-3 text-sm text-zinc-400">
           <div className="flex -space-x-2">
-            {['MR', 'JL', 'CS'].map((i, idx) => (
+            {["MR", "JL", "CS"].map((i, idx) => (
               <div
                 key={i}
                 className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-background text-[10px] font-bold text-white"
                 style={{
-                  background: ['#A3E635', '#4ADE80', '#BEF264'][idx],
+                  background: ["#A3E635", "#4ADE80", "#BEF264"][idx],
                 }}
               >
                 {i}
@@ -161,9 +186,7 @@ function LandingPage() {
 
       {/* Features */}
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <h2 className="mb-10 text-center text-3xl font-bold md:text-4xl">
-          Tudo que você precisa
-        </h2>
+        <h2 className="mb-10 text-center text-3xl font-bold md:text-4xl">Tudo que você precisa</h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map(({ icon: Icon, color, title, desc }) => (
             <div

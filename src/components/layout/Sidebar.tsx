@@ -1,26 +1,19 @@
-import { useEffect, useState } from 'react';
-import { Link, useRouterState } from '@tanstack/react-router';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Home,
-  LayoutDashboard,
-  Search,
-  Zap,
-} from 'lucide-react';
-import { mockAnalysisList, mockUser } from '@/lib/mockData';
+import { useEffect, useState } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight, Home, LayoutDashboard, Search, Zap } from "lucide-react";
+import { mockAnalysisList, mockUser } from "@/lib/mockData";
 
 const nav: { to: string; label: string; icon: typeof Home; exact?: boolean }[] = [
-  { to: '/', label: 'Home', icon: Home, exact: true },
-  { to: '/analyze', label: 'Nova Análise', icon: Search },
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: "/", label: "Home", icon: Home, exact: true },
+  { to: "/analyze", label: "Nova Análise", icon: Search },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
 ];
 
 function scoreColor(s: number) {
-  if (s < 40) return 'text-red-400';
-  if (s < 70) return 'text-amber-400';
-  if (s < 85) return 'text-green-400';
-  return 'text-primary';
+  if (s < 40) return "text-red-400";
+  if (s < 70) return "text-amber-400";
+  if (s < 85) return "text-green-400";
+  return "text-primary";
 }
 
 export function Sidebar() {
@@ -28,29 +21,29 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('sidebar_collapsed');
-    if (stored === '1') setCollapsed(true);
+    const stored = localStorage.getItem("sidebar_collapsed");
+    if (stored === "1") setCollapsed(true);
   }, []);
 
   const toggle = () => {
     setCollapsed((c) => {
       const next = !c;
-      localStorage.setItem('sidebar_collapsed', next ? '1' : '0');
+      localStorage.setItem("sidebar_collapsed", next ? "1" : "0");
       return next;
     });
   };
 
   const recents = mockAnalysisList.slice(0, 3);
   const initials = mockUser.username
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
-    .join('');
+    .join("");
 
   return (
     <aside
       className={`hidden shrink-0 flex-col border-r border-zinc-800 bg-zinc-950 transition-all duration-200 md:flex ${
-        collapsed ? 'w-16' : 'w-60'
+        collapsed ? "w-16" : "w-60"
       }`}
     >
       {/* Top: logo + collapse */}
@@ -63,7 +56,7 @@ export function Sidebar() {
         )}
         <button
           onClick={toggle}
-          title={collapsed ? 'Expandir' : 'Recolher'}
+          title={collapsed ? "Expandir" : "Recolher"}
           className="ml-auto rounded-md p-1.5 text-zinc-400 transition hover:bg-zinc-900 hover:text-zinc-200"
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
@@ -81,9 +74,9 @@ export function Sidebar() {
               title={collapsed ? label : undefined}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 active
-                  ? 'border-l-2 border-primary bg-primary/10 text-primary'
-                  : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100'
-              } ${collapsed ? 'justify-center' : ''}`}
+                  ? "border-l-2 border-primary bg-primary/10 text-primary"
+                  : "text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100"
+              } ${collapsed ? "justify-center" : ""}`}
             >
               <Icon className="h-4 w-4 shrink-0" />
               {!collapsed && <span>{label}</span>}
@@ -111,9 +104,7 @@ export function Sidebar() {
                     alt=""
                     className="h-8 w-8 shrink-0 rounded object-cover"
                   />
-                  <span className="flex-1 truncate text-xs text-zinc-300">
-                    {a.title}
-                  </span>
+                  <span className="flex-1 truncate text-xs text-zinc-300">{a.title}</span>
                   <span className={`font-mono text-[10px] font-bold ${scoreColor(a.viral_score)}`}>
                     {a.viral_score}
                   </span>
@@ -129,7 +120,7 @@ export function Sidebar() {
         <Link
           to="/profile"
           className={`flex items-center gap-3 rounded-lg p-2 transition hover:bg-zinc-900 ${
-            collapsed ? 'justify-center' : ''
+            collapsed ? "justify-center" : ""
           }`}
         >
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-xs font-bold text-primary-foreground">

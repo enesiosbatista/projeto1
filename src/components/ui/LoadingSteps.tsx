@@ -1,4 +1,4 @@
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2 } from "lucide-react";
 
 interface Props {
   steps: string[];
@@ -15,11 +15,7 @@ export function LoadingSteps({ steps, currentStep }: Props) {
           <li
             key={i}
             className={`flex items-center gap-3 text-sm transition-colors ${
-              isActive
-                ? 'text-foreground'
-                : isDone
-                  ? 'text-zinc-500'
-                  : 'text-zinc-600'
+              isActive ? "text-foreground" : isDone ? "text-zinc-500" : "text-zinc-600"
             }`}
           >
             <span className="flex h-5 w-5 items-center justify-center">

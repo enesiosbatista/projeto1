@@ -1,10 +1,10 @@
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 interface Props {
   className?: string;
 }
 
-export function SkeletonCard({ className = '' }: Props) {
+export function SkeletonCard({ className = "" }: Props) {
   return (
     <motion.div
       className={`bg-zinc-800 rounded-xl ${className}`}
@@ -12,7 +12,7 @@ export function SkeletonCard({ className = '' }: Props) {
       transition={{
         repeat: Infinity,
         duration: 1.5,
-        ease: 'easeInOut',
+        ease: "easeInOut",
       }}
     />
   );

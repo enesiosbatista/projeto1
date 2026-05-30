@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Link } from '@tanstack/react-router';
-import { motion } from 'framer-motion';
-import { Eye, Star, Trash2 } from 'lucide-react';
-import type { Analysis } from '@/types/database';
-import { PlatformBadge } from '@/components/ui/PlatformBadge';
-import { ViralScore } from '@/components/ui/ViralScore';
+import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import { Eye, Star, Trash2 } from "lucide-react";
+import type { Analysis } from "@/types/database";
+import { PlatformBadge } from "@/components/ui/PlatformBadge";
+import { ViralScore } from "@/components/ui/ViralScore";
 
 interface Props {
   analysis: Analysis;
@@ -16,13 +16,13 @@ interface Props {
 
 function formatDuration(s: number) {
   const m = Math.floor(s / 60);
-  return `${m}:${String(s % 60).padStart(2, '0')}`;
+  return `${m}:${String(s % 60).padStart(2, "0")}`;
 }
 
 function relativeTime(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
   const h = Math.floor(diff / 3600000);
-  if (h < 1) return 'agora mesmo';
+  if (h < 1) return "agora mesmo";
   if (h < 24) return `há ${h}h`;
   const d = Math.floor(h / 24);
   return `há ${d}d`;
@@ -86,10 +86,10 @@ export function AnalysisCard({
             onClick={() => onToggleFavorite(analysis.id)}
             title="Favoritar"
             className={`rounded-md p-2 transition hover:bg-zinc-800 ${
-              isFavorite ? 'text-amber-400' : 'text-zinc-400 hover:text-amber-300'
+              isFavorite ? "text-amber-400" : "text-zinc-400 hover:text-amber-300"
             }`}
           >
-            <Star size={16} fill={isFavorite ? 'currentColor' : 'none'} />
+            <Star size={16} fill={isFavorite ? "currentColor" : "none"} />
           </button>
           <button
             onClick={() => {

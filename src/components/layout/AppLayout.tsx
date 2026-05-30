@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-import { Header } from './Header';
-import { Sidebar } from './Sidebar';
-import { BottomNav } from './BottomNav';
+import type { ReactNode } from "react";
+import { Header } from "./Header";
+import { Sidebar } from "./Sidebar";
+import { BottomNav } from "./BottomNav";
 
 export function AppLayout({ children }: { children: ReactNode }) {
   return (

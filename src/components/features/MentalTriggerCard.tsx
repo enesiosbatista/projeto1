@@ -1,4 +1,4 @@
-import type { MentalTrigger } from '@/types/database';
+import type { MentalTrigger } from "@/types/database";
 
 export function MentalTriggerCard({ trigger }: { trigger: MentalTrigger }) {
   return (

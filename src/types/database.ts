@@ -1,7 +1,7 @@
-export type Plan = 'free' | 'pro' | 'elite';
-export type Platform = 'youtube' | 'shorts' | 'reels' | 'tiktok';
-export type AnalysisStatus = 'pending' | 'processing' | 'complete' | 'error';
-export type Verdict = 'viralized' | 'not_viralized';
+export type Plan = "free" | "pro" | "elite";
+export type Platform = "youtube" | "shorts" | "reels" | "tiktok";
+export type AnalysisStatus = "pending" | "processing" | "complete" | "error";
+export type Verdict = "viralized" | "not_viralized";
 
 export interface Profile {
   id: string;
@@ -46,7 +46,7 @@ export interface MentalTrigger {
 export interface TranscriptLine {
   timestamp: string;
   text: string;
-  type: 'hook' | 'cta' | 'highlight' | 'normal';
+  type: "hook" | "cta" | "highlight" | "normal";
 }
 
 export interface ScriptRecreation {

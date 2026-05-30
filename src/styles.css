@@ -4,11 +4,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap");
 
 @theme inline {
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -54,45 +54,45 @@
   --radius: 0.75rem;
 
   --background: #000000;
-  --foreground: #FAFAFA;
+  --foreground: #fafafa;
 
-  --card: #0C0D0C;
-  --card-foreground: #FAFAFA;
+  --card: #0c0d0c;
+  --card-foreground: #fafafa;
 
   --elevated: #141714;
 
-  --popover: #0C0D0C;
-  --popover-foreground: #FAFAFA;
+  --popover: #0c0d0c;
+  --popover-foreground: #fafafa;
 
-  --primary: #A3E635;
+  --primary: #a3e635;
   --primary-foreground: #000000;
 
-  --secondary: #4ADE80;
+  --secondary: #4ade80;
   --secondary-foreground: #000000;
 
-  --accent: #BEF264;
+  --accent: #bef264;
   --accent-foreground: #000000;
 
-  --muted: #1B1D1B;
-  --muted-foreground: #A1A1AA;
-  --text-muted: #52525B;
+  --muted: #1b1d1b;
+  --muted-foreground: #a1a1aa;
+  --text-muted: #52525b;
 
-  --success: #22C55E;
-  --destructive: #EF4444;
-  --destructive-foreground: #FAFAFA;
+  --success: #22c55e;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
 
   --border: #222922;
   --input: #151815;
-  --ring: #A3E635;
+  --ring: #a3e635;
 
   --sidebar: #050505;
-  --sidebar-foreground: #FAFAFA;
-  --sidebar-primary: #A3E635;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #a3e635;
   --sidebar-primary-foreground: #000000;
   --sidebar-accent: #151815;
-  --sidebar-accent-foreground: #FAFAFA;
+  --sidebar-accent-foreground: #fafafa;
   --sidebar-border: #222922;
-  --sidebar-ring: #A3E635;
+  --sidebar-ring: #a3e635;
 }
 
 @layer base {
@@ -108,7 +108,11 @@
     color-scheme: dark;
   }
 
-  h1, h2, h3, h4, h5 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
     font-weight: 700;
     letter-spacing: -0.02em;
   }
@@ -122,7 +126,7 @@
 
 @layer utilities {
   .text-gradient-viral {
-    background: linear-gradient(90deg, #A3E635 0%, #10B981 100%);
+    background: linear-gradient(90deg, #a3e635 0%, #10b981 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

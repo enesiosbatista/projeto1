@@ -7,8 +7,8 @@ import {
   Tooltip,
   ReferenceLine,
   ResponsiveContainer,
-} from 'recharts';
-import type { RetentionPoint } from '@/types/database';
+} from "recharts";
+import type { RetentionPoint } from "@/types/database";
 
 interface Props {
   data: RetentionPoint[];
@@ -26,22 +26,20 @@ export function RetentionChart({ data }: Props) {
             data[maxIdx].retention - data[maxIdx + 1].retention
             ? i
             : maxIdx,
-        0
+        0,
       )
     : 0;
 
   // Pico após ponto 5
-  const peakIndex = hasData && data.length > 5
-    ? data
-        .slice(5)
-        .reduce(
-          (maxIdx, item, i) =>
-            item.retention > data[5 + maxIdx].retention
-              ? i
-              : maxIdx,
-          0
-        ) + 5
-    : 0;
+  const peakIndex =
+    hasData && data.length > 5
+      ? data
+          .slice(5)
+          .reduce(
+            (maxIdx, item, i) => (item.retention > data[5 + maxIdx].retention ? i : maxIdx),
+            0,
+          ) + 5
+      : 0;
 
   return (
     <div className="mb-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
@@ -58,25 +56,25 @@ export function RetentionChart({ data }: Props) {
 
           <XAxis
             dataKey="second"
-            tickFormatter={(v) => v + 's'}
+            tickFormatter={(v) => v + "s"}
             stroke="#52525B"
             tick={{ fontSize: 11 }}
           />
 
           <YAxis
             domain={[0, 100]}
-            tickFormatter={(v) => v + '%'}
+            tickFormatter={(v) => v + "%"}
             stroke="#52525B"
             tick={{ fontSize: 11 }}
           />
 
           <Tooltip
             contentStyle={{
-              backgroundColor: '#18181B',
-              border: '1px solid #3F3F46',
-              borderRadius: '8px',
-              fontSize: '11px',
-              color: '#F4F4F5',
+              backgroundColor: "#18181B",
+              border: "1px solid #3F3F46",
+              borderRadius: "8px",
+              fontSize: "11px",
+              color: "#F4F4F5",
             }}
           />
 
@@ -94,10 +92,10 @@ export function RetentionChart({ data }: Props) {
               stroke="#F59E0B"
               strokeDasharray="3 3"
               label={{
-                value: '⚠ Queda',
-                fill: '#FBBF24',
+                value: "⚠ Queda",
+                fill: "#FBBF24",
                 fontSize: 10,
-                position: 'top',
+                position: "top",
               }}
             />
           )}
@@ -108,10 +106,10 @@ export function RetentionChart({ data }: Props) {
               stroke="#22C55E"
               strokeDasharray="3 3"
               label={{
-                value: '📈 Pico',
-                fill: '#22C55E',
+                value: "📈 Pico",
+                fill: "#22C55E",
                 fontSize: 10,
-                position: 'top',
+                position: "top",
               }}
             />
           )}

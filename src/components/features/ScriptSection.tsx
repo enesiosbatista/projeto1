@@ -2,13 +2,13 @@ interface Props {
   emoji: string;
   title: string;
   text: string;
-  color: 'amber' | 'violet' | 'cyan';
+  color: "amber" | "violet" | "cyan";
 }
 
 const colorMap = {
-  amber: 'border-amber-500 bg-amber-950/20',
-  violet: 'border-primary bg-primary/10',
-  cyan: 'border-secondary bg-secondary/10',
+  amber: "border-amber-500 bg-amber-950/20",
+  violet: "border-primary bg-primary/10",
+  cyan: "border-secondary bg-secondary/10",
 };
 
 export function ScriptSection({ emoji, title, text, color }: Props) {
@@ -18,7 +18,7 @@ export function ScriptSection({ emoji, title, text, color }: Props) {
         {emoji} {title}
       </h3>
       <div className="space-y-2 text-sm text-zinc-300">
-        {text.split('\n').map((p, i) => (
+        {text.split("\n").map((p, i) => (
           <p key={i}>{p}</p>
         ))}
       </div>

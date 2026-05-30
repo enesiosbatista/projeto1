@@ -1,4 +1,4 @@
-import type { LucideIcon } from 'lucide-react';
+import type { LucideIcon } from "lucide-react";
 
 interface Props {
   label: string;
@@ -7,9 +7,9 @@ interface Props {
 }
 
 function barColor(v: number) {
-  if (v < 40) return 'bg-red-500';
-  if (v < 70) return 'bg-amber-500';
-  return 'bg-green-500';
+  if (v < 40) return "bg-red-500";
+  if (v < 70) return "bg-amber-500";
+  return "bg-green-500";
 }
 
 export function MetricCard({ label, value, icon: Icon }: Props) {

@@ -1,24 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link } from '@tanstack/react-router';
-import { Bell, Plus } from 'lucide-react';
-import { mockUser } from '@/lib/mockData';
+import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { Bell, Plus } from "lucide-react";
+import { mockUser } from "@/lib/mockData";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   const initials = mockUser.username
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
-    .join('');
+    .join("");
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
-    document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
   return (
