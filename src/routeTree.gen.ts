@@ -9,17 +9,48 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as AnalyzeRouteImport } from './routes/analyze'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResultIdRouteImport } from './routes/result.$id'
+import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe-webhook'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InsightsRoute = InsightsRouteImport.update({
@@ -52,6 +83,11 @@ const ResultIdRoute = ResultIdRouteImport.update({
   path: '/result/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStripeWebhookRoute = ApiStripeWebhookRouteImport.update({
+  id: '/api/stripe-webhook',
+  path: '/api/stripe-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,7 +95,13 @@ export interface FileRoutesByFullPath {
   '/connect': typeof ConnectRoute
   '/dashboard': typeof DashboardRoute
   '/insights': typeof InsightsRoute
+  '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
+  '/api/stripe-webhook': typeof ApiStripeWebhookRoute
   '/result/$id': typeof ResultIdRoute
 }
 export interface FileRoutesByTo {
@@ -68,7 +110,13 @@ export interface FileRoutesByTo {
   '/connect': typeof ConnectRoute
   '/dashboard': typeof DashboardRoute
   '/insights': typeof InsightsRoute
+  '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
+  '/api/stripe-webhook': typeof ApiStripeWebhookRoute
   '/result/$id': typeof ResultIdRoute
 }
 export interface FileRoutesById {
@@ -78,7 +126,13 @@ export interface FileRoutesById {
   '/connect': typeof ConnectRoute
   '/dashboard': typeof DashboardRoute
   '/insights': typeof InsightsRoute
+  '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
+  '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
+  '/api/stripe-webhook': typeof ApiStripeWebhookRoute
   '/result/$id': typeof ResultIdRoute
 }
 export interface FileRouteTypes {
@@ -89,7 +143,13 @@ export interface FileRouteTypes {
     | '/connect'
     | '/dashboard'
     | '/insights'
+    | '/login'
+    | '/pricing'
+    | '/privacy'
     | '/profile'
+    | '/signup'
+    | '/terms'
+    | '/api/stripe-webhook'
     | '/result/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -98,7 +158,13 @@ export interface FileRouteTypes {
     | '/connect'
     | '/dashboard'
     | '/insights'
+    | '/login'
+    | '/pricing'
+    | '/privacy'
     | '/profile'
+    | '/signup'
+    | '/terms'
+    | '/api/stripe-webhook'
     | '/result/$id'
   id:
     | '__root__'
@@ -107,7 +173,13 @@ export interface FileRouteTypes {
     | '/connect'
     | '/dashboard'
     | '/insights'
+    | '/login'
+    | '/pricing'
+    | '/privacy'
     | '/profile'
+    | '/signup'
+    | '/terms'
+    | '/api/stripe-webhook'
     | '/result/$id'
   fileRoutesById: FileRoutesById
 }
@@ -117,17 +189,58 @@ export interface RootRouteChildren {
   ConnectRoute: typeof ConnectRoute
   DashboardRoute: typeof DashboardRoute
   InsightsRoute: typeof InsightsRoute
+  LoginRoute: typeof LoginRoute
+  PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
+  SignupRoute: typeof SignupRoute
+  TermsRoute: typeof TermsRoute
+  ApiStripeWebhookRoute: typeof ApiStripeWebhookRoute
   ResultIdRoute: typeof ResultIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/insights': {
@@ -172,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/stripe-webhook': {
+      id: '/api/stripe-webhook'
+      path: '/api/stripe-webhook'
+      fullPath: '/api/stripe-webhook'
+      preLoaderRoute: typeof ApiStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -181,7 +301,13 @@ const rootRouteChildren: RootRouteChildren = {
   ConnectRoute: ConnectRoute,
   DashboardRoute: DashboardRoute,
   InsightsRoute: InsightsRoute,
+  LoginRoute: LoginRoute,
+  PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
+  SignupRoute: SignupRoute,
+  TermsRoute: TermsRoute,
+  ApiStripeWebhookRoute: ApiStripeWebhookRoute,
   ResultIdRoute: ResultIdRoute,
 }
 export const routeTree = rootRouteImport

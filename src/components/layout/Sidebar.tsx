@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Home, LayoutDashboard, Search, Zap } from "lucide-react";
-import { mockAnalysisList, mockUser } from "@/lib/mockData";
+import { mockAnalysisList } from "@/lib/mockData";
+import { useAuth } from "./AuthProvider";
+import { getAnalyses } from "@/lib/db";
 
 const nav: { to: string; label: string; icon: typeof Home; exact?: boolean }[] = [
   { to: "/", label: "Home", icon: Home, exact: true },
@@ -19,11 +22,25 @@ function scoreColor(s: number) {
 export function Sidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
+  const [userAnalyses, setUserAnalyses] = useState<any[]>([]);
 
   useEffect(() => {
     const stored = localStorage.getItem("sidebar_collapsed");
     if (stored === "1") setCollapsed(true);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      getAnalyses(user.id)
+        .then((list) => {
+          setUserAnalyses(list);
+        })
+        .catch((e) => {
+          console.error("Error loading user analyses in Sidebar", e);
+        });
+    }
+  }, [user]);
 
   const toggle = () => {
     setCollapsed((c) => {
@@ -33,12 +50,17 @@ export function Sidebar() {
     });
   };
 
-  const recents = mockAnalysisList.slice(0, 3);
-  const initials = mockUser.username
+  const username = user?.user_metadata?.name || user?.email?.split("@")[0] || "Criador";
+  const initials = username
     .split(" ")
-    .map((n) => n[0])
+    .map((n: string) => n[0])
     .slice(0, 2)
-    .join("");
+    .join("")
+    .toUpperCase();
+
+  const userPlan = user?.user_metadata?.plan || "Gratuito";
+
+  const recents = userAnalyses.length > 0 ? userAnalyses.slice(0, 3) : mockAnalysisList.slice(0, 3);
 
   return (
     <aside
@@ -128,9 +150,9 @@ export function Sidebar() {
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-semibold text-white">{mockUser.username}</p>
+              <p className="truncate text-xs font-semibold text-white">{username}</p>
               <span className="mt-0.5 inline-block rounded bg-zinc-700 px-1.5 py-0.5 text-[10px] text-zinc-200">
-                Plano Free
+                Plano {userPlan}
               </span>
             </div>
           )}

@@ -1,17 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, Plus } from "lucide-react";
-import { mockUser } from "@/lib/mockData";
+import { useAuth } from "./AuthProvider";
+import { toast } from "sonner";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
-  const initials = mockUser.username
+  const username = user?.user_metadata?.name || user?.email?.split("@")[0] || "Criador";
+  const initials = username
     .split(" ")
-    .map((n) => n[0])
+    .map((n: string) => n[0])
     .slice(0, 2)
-    .join("");
+    .join("")
+    .toUpperCase();
+
+  const credits = user?.user_metadata?.credits ?? 0;
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -20,6 +27,19 @@ export function Header() {
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
+
+  const handleLogout = async () => {
+    setOpen(false);
+    toast.success("Desconectando...");
+    try {
+      await signOut();
+      setTimeout(() => {
+        navigate({ to: "/" });
+      }, 500);
+    } catch (err) {
+      toast.error("Erro ao sair.");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-zinc-800 bg-background/80 px-4 backdrop-blur md:px-6">
@@ -38,8 +58,8 @@ export function Header() {
           <Plus size={14} /> Nova Análise
         </Link>
 
-        <span className="hidden rounded-md bg-zinc-800 px-2.5 py-1 text-xs font-medium text-zinc-300 sm:inline">
-          {mockUser.credits} créditos
+        <span className="hidden rounded-md bg-zinc-800 px-2.5 py-1 text-xs font-medium text-zinc-300 sm:inline font-mono">
+          {credits} {credits === 1 ? "crédito" : "créditos"}
         </span>
 
         <button
@@ -75,13 +95,12 @@ export function Header() {
                 Configurações
               </button>
               <div className="border-t border-zinc-800" />
-              <Link
-                to="/"
-                onClick={() => setOpen(false)}
-                className="block px-4 py-2.5 text-sm text-red-400 transition hover:bg-zinc-800"
+              <button
+                onClick={handleLogout}
+                className="block w-full px-4 py-2.5 text-left text-sm text-red-400 transition hover:bg-zinc-800 cursor-pointer"
               >
                 Sair
-              </Link>
+              </button>
             </div>
           )}
         </div>

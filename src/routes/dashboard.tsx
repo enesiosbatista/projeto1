@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
@@ -16,8 +16,13 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { AnalysisCard } from "@/components/features/AnalysisCard";
 import { ProfileScoreCard } from "@/components/ui/ProfileScoreCard";
 import { AlertBanner } from "@/components/ui/AlertBanner";
-import { mockAnalysisList, mockUser } from "@/lib/mockData";
+import { mockAnalysisList } from "@/lib/mockData";
 import type { Analysis } from "@/types/database";
+import { useAuth } from "@/components/layout/AuthProvider";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
+
+import { getAnalyses, toggleFavoriteAnalysis, deleteAnalysis, saveAnalysis } from "@/lib/db";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — ViralMind AI" }] }),
@@ -40,6 +45,43 @@ type Sort = "recent" | "highest" | "lowest";
 
 function DashboardPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Handle Stripe Checkout success redirection
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout_success") === "true") {
+      toast.success("Parabéns! Sua assinatura Premium foi ativada com sucesso. ⚡");
+
+      // In local dummy mode, force-upgrade the mock session immediately
+      const userStr = localStorage.getItem("viralmind_user");
+      if (userStr) {
+        try {
+          const u = JSON.parse(userStr);
+          u.user_metadata = {
+            ...u.user_metadata,
+            plan: "Premium",
+            credits: 50,
+            stripe_customer_id: "cus_mock_billing_123",
+          };
+          localStorage.setItem("viralmind_user", JSON.stringify(u));
+
+          const sessionStr = localStorage.getItem("viralmind_session");
+          if (sessionStr) {
+            const s = JSON.parse(sessionStr);
+            localStorage.setItem("viralmind_session", JSON.stringify({ ...s, user: u }));
+          }
+
+          // Smoothly refresh after showing the success toast
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 1800);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, []);
 
   // Alerts state
   const [alerts, setAlerts] = useState([
@@ -94,27 +136,69 @@ function DashboardPage() {
   ];
 
   // Analysis list state
-  // We initialize the mock items, ensuring they have an isFavorited property
-  const [analysisList, setAnalysisList] = useState<(Analysis & { isFavorited?: boolean })[]>(() =>
-    mockAnalysisList.map((item, idx) => ({
-      ...item,
-      // Default first and third items as favorited to match original behavior
-      isFavorited: idx === 0 || idx === 2,
-    })),
-  );
+  const [analysisList, setAnalysisList] = useState<(Analysis & { isFavorited?: boolean })[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      getAnalyses(user.id)
+        .then((list) => {
+          if (list.length > 0) {
+            setAnalysisList(list);
+          } else {
+            // Initialize mock ones in user DB scope if completely empty on first load
+            const initial = mockAnalysisList.map((item, idx) => ({
+              ...item,
+              user_id: user.id,
+              isFavorited: idx === 0 || idx === 2,
+            }));
+            Promise.all(initial.map((item) => saveAnalysis(item))).then(() => {
+              setAnalysisList(initial);
+            });
+          }
+        })
+        .catch((e) => {
+          console.error("Error fetching user analyses in Dashboard", e);
+        });
+    }
+  }, [user]);
 
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<Sort>("recent");
   const [favOpen, setFavOpen] = useState(false);
 
   // Favorite toggle handler
-  const handleFavorite = (id: string) =>
+  const handleFavorite = async (id: string) => {
+    if (!user) return;
+    const target = analysisList.find((a) => a.id === id);
+    if (!target) return;
+
+    const nextFavorited = !target.isFavorited;
+
+    // Optimistic UI update
     setAnalysisList((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, isFavorited: !a.isFavorited } : a)),
+      prev.map((a) => (a.id === id ? { ...a, isFavorited: nextFavorited } : a)),
     );
 
+    try {
+      await toggleFavoriteAnalysis(user.id, id, nextFavorited);
+    } catch (e) {
+      console.error("Error toggling favorite", e);
+    }
+  };
+
   // Delete handler
-  const handleDelete = (id: string) => setAnalysisList((prev) => prev.filter((a) => a.id !== id));
+  const handleDelete = async (id: string) => {
+    if (!user) return;
+
+    // Optimistic UI update
+    setAnalysisList((prev) => prev.filter((a) => a.id !== id));
+
+    try {
+      await deleteAnalysis(user.id, id);
+    } catch (e) {
+      console.error("Error deleting analysis", e);
+    }
+  };
 
   // Filter and Sort memoized list
   const filteredAndSortedList = useMemo(() => {
@@ -154,12 +238,19 @@ function DashboardPage() {
     },
   };
 
+  const username = user?.user_metadata?.name || user?.email?.split("@")[0] || "Criador";
+  const userPlan = user?.user_metadata?.plan || "Gratuito";
+  const credits = user?.user_metadata?.credits ?? 0;
+  const maxCredits = 5;
+  const creditPct = (credits / maxCredits) * 100;
+
   return (
     <AppLayout>
+      <Toaster />
       <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6 md:py-8">
         {/* Header */}
         <header className="mb-6">
-          <h1 className="text-3xl font-bold text-white">Olá, {mockUser.username} 👋</h1>
+          <h1 className="text-3xl font-bold text-white">Olá, {username} 👋</h1>
           <p className="mt-1 text-sm text-zinc-500">{getFormattedDate()}</p>
         </header>
 
@@ -187,29 +278,34 @@ function DashboardPage() {
         <section className="mb-6 grid grid-cols-1 gap-6 rounded-2xl border border-violet-800 bg-gradient-to-r from-zinc-900 to-violet-950/50 p-5 md:grid-cols-2">
           <div className="flex flex-col justify-center">
             <span className="inline-flex self-start rounded-md bg-violet-900/40 border border-violet-700 px-2 py-0.5 text-xs font-semibold text-violet-300">
-              Plano Free
+              Plano {userPlan}
             </span>
             <p className="mt-3 font-mono text-2xl font-bold text-white">
-              {mockUser.credits} créditos restantes
+              {credits} {credits === 1 ? "crédito restante" : "créditos restantes"}
             </p>
             <p className="mt-1 text-xs text-zinc-400">Cada análise consome 1 crédito.</p>
-            {/* Progress Bar 3/5 (60%) */}
+            {/* Progress Bar */}
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-zinc-800">
               <div
-                className="h-full rounded-full bg-violet-600 transition-all"
-                style={{ width: `${(mockUser.credits / 5) * 100}%` }}
+                className="h-full rounded-full bg-violet-600 transition-all duration-550"
+                style={{ width: `${creditPct}%` }}
               />
             </div>
           </div>
           <div className="flex flex-col justify-between rounded-xl border border-violet-800/30 bg-zinc-900/60 p-4">
             <div>
-              <p className="text-sm font-bold text-violet-300">Pro — R$47/mês</p>
+              <p className="text-sm font-bold text-violet-300">
+                Premium — R$10,90/mês ou R$89,90/ano
+              </p>
               <p className="mt-1 text-xs text-zinc-400">
-                50 análises/mês + prioridade na fila + remodelagem ilimitada
+                50 análises/mês + prioridade suprema + remodelagens de roteiro ilimitadas
               </p>
             </div>
-            <button className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm h-10 px-4 transition cursor-pointer">
-              <Sparkles size={14} /> Fazer Upgrade Pro →
+            <button
+              onClick={() => navigate({ to: "/pricing" })}
+              className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-sm h-10 px-4 transition cursor-pointer"
+            >
+              <Sparkles size={14} /> Fazer Upgrade Premium →
             </button>
           </div>
         </section>
@@ -303,6 +399,8 @@ function DashboardPage() {
                     isFavorite={a.isFavorited || false}
                     onToggleFavorite={handleFavorite}
                     onDelete={handleDelete}
+                    // Explicitly pass the link destination for safety
+                    linkTo={`/result/${a.id}`}
                   />
                 </div>
               ))}
@@ -345,6 +443,7 @@ function DashboardPage() {
                         isFavorite={true}
                         onToggleFavorite={handleFavorite}
                         onDelete={handleDelete}
+                        linkTo={`/result/${a.id}`}
                       />
                     </div>
                   ))}

@@ -9,6 +9,8 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import { AuthProvider } from "@/components/layout/AuthProvider";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -74,12 +76,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ViralMind AI" },
-      { name: "description", content: "Análise viral de vídeos com IA em segundos." },
-      { property: "og:title", content: "ViralMind AI" },
-      { property: "og:description", content: "Descubra por que vídeos viralizam." },
+      { title: "ViralMind AI — Engenharia Reversa de Vídeos Virais" },
+      {
+        name: "description",
+        content:
+          "Cole o link de qualquer vídeo e nossa IA analisa os ganchos, ritmo de retenção e reescreve roteiros virais originais em segundos.",
+      },
+      {
+        name: "keywords",
+        content:
+          "youtube, viral, tiktok, reels, shorts, inteligencia artificial, roteiro, copywriting, engajamento, SEO, marketing digital",
+      },
+      { property: "og:title", content: "ViralMind AI — Como Criar Vídeos Virais" },
+      {
+        property: "og:description",
+        content:
+          "Analise a estrutura dos maiores virais e multiplique suas visualizações com roteiros IA.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:image", content: "https://viralmind.ai/og-image.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "ViralMind AI — Engenharia Reversa de Vídeos Virais" },
+      {
+        name: "twitter:description",
+        content: "Descubra por que vídeos viralizam com nossa análise de IA em segundos.",
+      },
+      { name: "twitter:image", content: "https://viralmind.ai/og-image.png" },
     ],
     links: [
       {
@@ -112,21 +134,61 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  useEffect(() => {
+    // Client-side Google Analytics and PostHog safe initialization
+    if (typeof window !== "undefined") {
+      const gaId = import.meta.env.VITE_GA_ID;
+      const phKey = import.meta.env.VITE_POSTHOG_KEY;
+      const phHost = import.meta.env.VITE_POSTHOG_HOST || "https://app.posthog.com";
+
+      // 1. Google Analytics Injection
+      if (gaId && !gaId.includes("dummy")) {
+        const gaScript = document.createElement("script");
+        gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+        gaScript.async = true;
+        document.head.appendChild(gaScript);
+
+        const gaInit = document.createElement("script");
+        gaInit.innerHTML = `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${gaId}');
+        `;
+        document.head.appendChild(gaInit);
+        console.log(`[Analytics] Google Analytics initialized with ID: ${gaId}`);
+      }
+
+      // 2. PostHog Script Injection
+      if (phKey && !phKey.includes("dummy")) {
+        const phScript = document.createElement("script");
+        phScript.innerHTML = `
+          !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s,p.crossOrigin="anonymous",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(".people")},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+          posthog.init('${phKey}', { api_host: '${phHost}' });
+        `;
+        document.head.appendChild(phScript);
+        console.log(`[Analytics] PostHog initialized with Key: ${phKey}`);
+      }
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={pathname}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-          className="min-h-screen w-full flex flex-col"
-        >
-          <Outlet />
-        </motion.div>
-      </AnimatePresence>
+      <AuthProvider>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="min-h-screen w-full flex flex-col"
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

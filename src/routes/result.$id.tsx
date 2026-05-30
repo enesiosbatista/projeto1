@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -20,7 +21,9 @@ import { PlatformBadge } from "@/components/ui/PlatformBadge";
 import { ViralScore } from "@/components/ui/ViralScore";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { RetentionChart } from "@/components/features/RetentionChart";
-import { mockAnalysis } from "@/lib/mockData";
+import { mockAnalysis, mockAnalysisList } from "@/lib/mockData";
+import { useAuth } from "@/components/layout/AuthProvider";
+import { getAnalyses, getRecreations, saveRecreation } from "@/lib/db";
 import type { Analysis } from "@/types/database";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -51,13 +54,53 @@ const styleRewrites: Record<string, string> = {
   "Mais Profissional":
     "A análise estatística de retenção de público demonstra que ganchos estruturais aumentam a taxa de conclusão do vídeo em até 37%. Sugere-se a reestruturação da introdução para focar em métricas claras e tangíveis nos primeiros 5 segundos.",
   "Mais Curto":
-    "Pare de trabalhar 12 horas. Trocar tempo por dinheiro em 2026 é loucura. Use nossa estratégia de 3 passos simples. Mude isso hoje mesmo.",
+    "Pare de trabalhar 12 horas. Trocar tempo por dinheiro in 2026 é loucura. Use nossa estratégia de 3 passos simples. Mude isso hoje mesmo.",
   "Mais Impactante":
     "Atenção: 99% das pessoas estão jogando o próprio tempo no lixo. Se você não mudar sua abordagem agora, será deixado para trás. A escolha é sua: continuar na mediocridade ou dominar a atenção do seu público.",
 };
 
 function ResultPage() {
-  const analysis: Analysis = mockAnalysis;
+  const { id } = Route.useParams();
+  const { user } = useAuth();
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [savedRecreations, setSavedRecreations] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      getAnalyses(user.id)
+        .then((list) => {
+          const found = list.find((a) => a.id === id);
+          if (found) {
+            setAnalysis(found);
+          } else {
+            // Fallback to mock lists
+            const foundMock = mockAnalysisList.find((a) => a.id === id) || mockAnalysis;
+            setAnalysis(foundMock);
+          }
+        })
+        .catch((e) => {
+          console.error("Error loading user analyses in ResultPage", e);
+          const foundMock = mockAnalysisList.find((a) => a.id === id) || mockAnalysis;
+          setAnalysis(foundMock);
+        });
+    } else {
+      const foundMock = mockAnalysisList.find((a) => a.id === id) || mockAnalysis;
+      setAnalysis(foundMock);
+    }
+  }, [id, user]);
+
+  useEffect(() => {
+    if (analysis) {
+      getRecreations(analysis.id)
+        .then((list) => {
+          setSavedRecreations(list);
+        })
+        .catch((e) => {
+          console.error("Error loading recreations", e);
+        });
+    }
+  }, [analysis]);
+
   const [activeTab, setActiveTab] = useState<Tab>("analysis");
   const [imgError, setImgError] = useState(false);
   const [score, setScore] = useState(0);
@@ -74,10 +117,9 @@ function ResultPage() {
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [rewriteState, setRewriteState] = useState<"idle" | "loading" | "ready">("idle");
 
-  const viralized = analysis.viral_score >= 70;
-
   // Animate viral score on mount (1.5s ease-out)
   useEffect(() => {
+    if (!analysis) return;
     const start = 0;
     const end = analysis.viral_score;
     const duration = 1500;
@@ -102,7 +144,7 @@ function ResultPage() {
 
     animationFrameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationFrameId);
-  }, [analysis.viral_score]);
+  }, [analysis]);
 
   // Handle messages delay for script recreation
   useEffect(() => {
@@ -120,12 +162,41 @@ function ResultPage() {
     };
   }, [scriptState]);
 
-  const triggerRewrite = () => {
+  if (!analysis) {
+    return (
+      <AppLayout>
+        <div className="flex min-h-[80vh] w-full items-center justify-center bg-zinc-950 text-foreground">
+          <div className="text-center space-y-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
+            <p className="text-sm text-zinc-400 font-medium font-mono">Carregando análise...</p>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  const viralized = analysis.viral_score >= 70;
+
+  const triggerRewrite = async () => {
     if (!selectedStyle) return;
     setRewriteState("loading");
-    setTimeout(() => {
+
+    try {
+      const content = styleRewrites[selectedStyle];
+      const { error, data } = await saveRecreation(analysis.id, selectedStyle, content);
+      if (error) {
+        toast.error("Erro ao salvar remodelagem.");
+        setRewriteState("ready");
+      } else {
+        toast.success("Roteiro remodelado e salvo com sucesso!");
+        setSavedRecreations((prev) => [data, ...prev]);
+        setRewriteState("ready");
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Erro ao processar remodelagem.");
       setRewriteState("ready");
-    }, 2000);
+    }
   };
 
   return (
@@ -805,6 +876,47 @@ function ResultPage() {
                       >
                         Exportar TXT
                       </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Histórico de Remodelagens Salvas */}
+                {savedRecreations.length > 0 && (
+                  <div className="mt-8 pt-6 border-t border-zinc-800">
+                    <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">
+                      📜 Histórico de Remodelagens Salvas
+                    </h3>
+                    <div className="space-y-4">
+                      {savedRecreations.map((rec) => (
+                        <div
+                          key={rec.id}
+                          className="bg-zinc-900/40 border border-zinc-800 rounded-xl p-4"
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="bg-violet-900/30 text-violet-300 border border-violet-800/60 text-xs px-2.5 py-0.5 rounded-full font-semibold">
+                              Estilo: {rec.style}
+                            </span>
+                            <span className="text-[10px] text-zinc-550 font-mono">
+                              {new Date(rec.created_at).toLocaleDateString("pt-BR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                          <p className="text-sm leading-relaxed text-zinc-350">{rec.content}</p>
+                          <div className="flex gap-2 mt-3">
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(rec.content);
+                                toast.success("Copiado para a área de transferência!");
+                              }}
+                              className="bg-zinc-800 text-xs px-3 h-7 rounded-lg text-zinc-450 hover:text-zinc-200 hover:bg-zinc-700 transition-all cursor-pointer font-semibold"
+                            >
+                              Copiar Roteiro
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}

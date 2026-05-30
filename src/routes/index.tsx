@@ -259,6 +259,26 @@ function LandingPage() {
           ))}
         </motion.div>
       </section>
+
+      {/* Footer */}
+      <footer className="border-t border-zinc-900 bg-zinc-950 py-10 mt-16 px-6">
+        <div className="mx-auto max-w-6xl flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500 font-medium">
+          <div>
+            <p>© 2026 ViralMind AI. Todos os direitos reservados.</p>
+          </div>
+          <div className="flex items-center gap-6">
+            <Link to="/pricing" className="hover:text-white transition-colors">
+              Preços
+            </Link>
+            <Link to="/terms" className="hover:text-white transition-colors">
+              Termos de Uso
+            </Link>
+            <Link to="/privacy" className="hover:text-white transition-colors">
+              Política de Privacidade
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
