@@ -5,6 +5,7 @@ import { Brain, Send, Zap, TrendingUp, XCircle, CheckCircle, Rocket, Clock } fro
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PlatformBadge } from "@/components/ui/PlatformBadge";
 import { ViralScore } from "@/components/ui/ViralScore";
+import { scaleIn, staggerContainer, staggerItem } from "@/lib/animations";
 
 export const Route = createFileRoute("/insights")({
   head: () => ({
@@ -195,7 +196,13 @@ function InsightsPage() {
             {messages.map((msg, idx) => {
               const isAi = msg.sender === "ai";
               return (
-                <div key={idx} className="flex flex-col w-full">
+                <motion.div
+                  key={idx}
+                  initial="hidden"
+                  animate="visible"
+                  variants={scaleIn}
+                  className="flex flex-col w-full"
+                >
                   <div
                     className={`${
                       isAi
@@ -205,7 +212,7 @@ function InsightsPage() {
                   >
                     <p className="whitespace-pre-line">{msg.text}</p>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
 
@@ -436,14 +443,20 @@ function InsightsPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6"
+          >
             {[
               { title: "Desafio 30 dias", score: "94%" },
               { title: "Roast de perfil", score: "87%" },
               { title: "Tutorial em 60s", score: "81%" },
             ].map((trend, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                variants={staggerItem}
                 className="bg-zinc-900/60 border border-violet-900/50 rounded-xl p-4 flex justify-between items-center"
               >
                 <div>
@@ -458,9 +471,9 @@ function InsightsPage() {
                     {trend.score}
                   </span>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </section>
       </div>
     </AppLayout>

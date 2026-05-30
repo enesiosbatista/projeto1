@@ -6,7 +6,9 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
+import { motion, AnimatePresence } from "framer-motion";
 
 import appCss from "../styles.css?url";
 
@@ -108,11 +110,23 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={pathname}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="min-h-screen w-full flex flex-col"
+        >
+          <Outlet />
+        </motion.div>
+      </AnimatePresence>
     </QueryClientProvider>
   );
 }

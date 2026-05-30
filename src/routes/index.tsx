@@ -12,6 +12,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import type { Platform } from "@/types/database";
+import { fadeInUp, staggerContainer, staggerItem } from "@/lib/animations";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -88,14 +89,14 @@ function LandingPage() {
     if (!url.trim()) return;
     try {
       localStorage.setItem("viralmind:pending", JSON.stringify({ url, platform }));
-    } catch (e) {
-      console.warn("localStorage is not available", e);
+    } catch (err) {
+      console.warn("localStorage is not available", err);
     }
     navigate({ to: "/analyze" });
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Top brand bar */}
       <header className="flex items-center justify-between px-6 py-5">
         <div className="flex items-center gap-2">
@@ -110,24 +111,58 @@ function LandingPage() {
       {/* Hero */}
       <section className="mx-auto max-w-3xl px-6 pt-10 pb-20 text-center md:pt-20">
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
           className="inline-flex items-center rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-sm text-primary"
         >
           🔥 +12.847 vídeos analisados esta semana
         </motion.div>
 
-        <h1 className="mt-6 text-5xl font-black tracking-tight md:text-7xl">
+        <motion.h1
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0, y: 15 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.5, delay: 0.15 },
+            },
+          }}
+          className="mt-6 text-5xl font-black tracking-tight md:text-7xl leading-tight"
+        >
           Descubra por que <span className="text-gradient-viral">vídeos viralizam</span>
-        </h1>
+        </motion.h1>
 
-        <p className="mx-auto mt-5 max-w-xl text-lg text-zinc-400">
+        <motion.p
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0, y: 15 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.5, delay: 0.3 },
+            },
+          }}
+          className="mx-auto mt-5 max-w-xl text-lg text-zinc-400 leading-relaxed"
+        >
           Cole o link de qualquer vídeo e a IA analisa em segundos por que viralizou — ou o que
           falta para viralizar.
-        </p>
+        </motion.p>
 
-        <form
+        <motion.form
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0, y: 15 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.5, delay: 0.45 },
+            },
+          }}
           onSubmit={handleSubmit}
           className="mx-auto mt-10 flex w-full max-w-2xl flex-col gap-3"
         >
@@ -143,7 +178,7 @@ function LandingPage() {
             <select
               value={platform}
               onChange={(e) => setPlatform(e.target.value as Platform)}
-              className="h-9 shrink-0 rounded-md border border-zinc-700 bg-zinc-950 px-2 text-xs text-zinc-200 focus:outline-none"
+              className="h-9 shrink-0 rounded-md border border-zinc-700 bg-zinc-950 px-2 text-xs text-zinc-200 focus:outline-none cursor-pointer"
             >
               {platformOptions.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -155,25 +190,37 @@ function LandingPage() {
 
           <button
             type="submit"
-            className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary/90 md:w-auto md:self-center md:px-8"
+            className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-base font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-95 duration-200 md:w-auto md:self-center md:px-8 cursor-pointer"
           >
             Analisar Agora <ArrowRight className="h-4 w-4" />
           </button>
 
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-zinc-500 mt-2">
             ✓ Grátis para começar &nbsp; ✓ Sem cadastro &nbsp; ✓ 30 segundos
           </p>
-        </form>
+        </motion.form>
 
         {/* Social proof */}
-        <div className="mt-12 flex items-center justify-center gap-3 text-sm text-zinc-400">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0, y: 15 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.5, delay: 0.6 },
+            },
+          }}
+          className="mt-12 flex items-center justify-center gap-3 text-sm text-zinc-400"
+        >
           <div className="flex -space-x-2">
             {["MR", "JL", "CS"].map((i, idx) => (
               <div
                 key={i}
-                className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-background text-[10px] font-bold text-white"
+                className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-background text-[10px] font-bold text-white shadow-sm"
                 style={{
-                  background: ["#A3E635", "#4ADE80", "#BEF264"][idx],
+                  background: ["#7C3AED", "#4ADE80", "#22C55E"][idx],
                 }}
               >
                 {i}
@@ -181,24 +228,36 @@ function LandingPage() {
             ))}
           </div>
           <span>★★★★★ &nbsp; Usado por mais de 3.200 criadores</span>
-        </div>
+        </motion.div>
       </section>
 
       {/* Features */}
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <h2 className="mb-10 text-center text-3xl font-bold md:text-4xl">Tudo que você precisa</h2>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <h2 className="mb-10 text-center text-3xl font-bold md:text-4xl text-white">
+          Tudo que você precisa
+        </h2>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+        >
           {features.map(({ icon: Icon, color, title, desc }) => (
-            <div
+            <motion.div
               key={title}
-              className="group rounded-xl border border-zinc-800 bg-zinc-900 p-6 transition-all duration-200 ease-out hover:border-primary/40"
+              variants={staggerItem}
+              whileHover={{ y: -4, scale: 1.01 }}
+              className="group rounded-xl border border-zinc-800 bg-zinc-900 p-6 transition-all duration-200 ease-out hover:border-primary/40 cursor-pointer overflow-hidden"
             >
               <Icon className={`mb-4 h-6 w-6 ${color}`} />
-              <h3 className="mb-2 text-lg font-semibold">{title}</h3>
-              <p className="text-sm text-zinc-400">{desc}</p>
-            </div>
+              <h3 className="mb-2 text-lg font-semibold text-white group-hover:text-primary transition-colors">
+                {title}
+              </h3>
+              <p className="text-sm text-zinc-400 leading-relaxed">{desc}</p>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
     </div>
   );

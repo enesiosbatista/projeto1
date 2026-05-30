@@ -53,8 +53,8 @@ function AnalyzePage() {
     <AppLayout>
       <div className="mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-xl flex-col items-center justify-center px-6 py-10">
         <motion.div
-          animate={{ scale: [1, 1.08, 1], opacity: [0.8, 1, 0.8] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          animate={{ scale: [1, 1.08, 1] }}
+          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
           className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/15 text-primary"
         >
           <Brain className="h-10 w-10" />

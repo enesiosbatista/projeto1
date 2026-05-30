@@ -24,6 +24,7 @@ import { mockAnalysis } from "@/lib/mockData";
 import type { Analysis } from "@/types/database";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { fadeInUp } from "@/lib/animations";
 
 export const Route = createFileRoute("/result/$id")({
   head: () => ({
@@ -132,7 +133,12 @@ function ResultPage() {
       <Toaster />
       <div className="lg:flex gap-6 p-6 max-w-7xl mx-auto w-full">
         {/* Coluna Esquerda — Info Card */}
-        <aside className="w-full lg:w-[320px] shrink-0 lg:sticky lg:top-[72px] lg:h-fit">
+        <motion.aside
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="w-full lg:w-[320px] shrink-0 lg:sticky lg:top-[72px] lg:h-fit"
+        >
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
             {/* Thumbnail */}
             <div className="w-full aspect-video rounded-xl overflow-hidden bg-zinc-800 relative flex items-center justify-center">
@@ -198,10 +204,22 @@ function ResultPage() {
               </button>
             </div>
           </div>
-        </aside>
+        </motion.aside>
 
         {/* Coluna Direita — Sistema de Abas */}
-        <main className="flex-1 min-w-0 mt-6 lg:mt-0">
+        <motion.main
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0, y: 15 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.4, delay: 0.15, ease: "easeOut" },
+            },
+          }}
+          className="flex-1 min-w-0 mt-6 lg:mt-0"
+        >
           {/* TabBar */}
           <div className="flex border-b border-zinc-800 mb-6 gap-1 overflow-x-auto whitespace-nowrap">
             <button
@@ -793,7 +811,7 @@ function ResultPage() {
               </div>
             )}
           </div>
-        </main>
+        </motion.main>
       </div>
     </AppLayout>
   );

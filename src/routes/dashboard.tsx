@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
   ChevronUp,
@@ -164,14 +164,24 @@ function DashboardPage() {
         </header>
 
         {/* Alert Banners */}
-        {alerts.map((alert) => (
-          <AlertBanner
-            key={alert.id}
-            message={alert.message}
-            type={alert.type}
-            onDismiss={() => handleDismissAlert(alert.id)}
-          />
-        ))}
+        <AnimatePresence>
+          {alerts.map((alert) => (
+            <motion.div
+              key={alert.id}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
+            >
+              <AlertBanner
+                message={alert.message}
+                type={alert.type}
+                onDismiss={() => handleDismissAlert(alert.id)}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
 
         {/* Bloco de Créditos */}
         <section className="mb-6 grid grid-cols-1 gap-6 rounded-2xl border border-violet-800 bg-gradient-to-r from-zinc-900 to-violet-950/50 p-5 md:grid-cols-2">
