@@ -79,6 +79,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithPassword = async (email: string, password: string) => {
     if (isDummySupabase) {
+      // Master Super Admin account interception
+      if (email === "enesiobahia@gmail.com" && password === "ESb15010509@@") {
+        const superAdminUser = {
+          id: "super-admin-uid-999",
+          email: "enesiobahia@gmail.com",
+          created_at: new Date().toISOString(),
+          user_metadata: {
+            name: "Enesio Batista",
+            onboarding_completed: true,
+            plan: "Super Admin",
+            credits: 9999,
+            role: "super_admin",
+          },
+        } as any;
+
+        const storedUsers = JSON.parse(localStorage.getItem("viralmind_registered_users") || "[]");
+        const idx = storedUsers.findIndex((u: any) => u.email === "enesiobahia@gmail.com");
+        const entry = {
+          email: "enesiobahia@gmail.com",
+          password: "ESb15010509@@",
+          user: superAdminUser,
+        };
+        if (idx !== -1) {
+          storedUsers[idx] = entry;
+        } else {
+          storedUsers.push(entry);
+        }
+        localStorage.setItem("viralmind_registered_users", JSON.stringify(storedUsers));
+        localStorage.setItem("viralmind_user", JSON.stringify(superAdminUser));
+
+        const mockSession = {
+          access_token: "mock-super-admin-token",
+          token_type: "bearer",
+          expires_in: 36000,
+          user: superAdminUser,
+        } as any;
+        localStorage.setItem("viralmind_session", JSON.stringify(mockSession));
+        setSession(mockSession);
+        setUser(superAdminUser);
+        return { error: null };
+      }
+
       // Local storage dummy validation
       const storedUsers = JSON.parse(localStorage.getItem("viralmind_registered_users") || "[]");
       const existingUser = storedUsers.find((u: any) => u.email === email);
@@ -314,4 +356,10 @@ export function useAuth() {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
+}
+
+// Master Admin helper to verify if the logged-in session has Super Admin rights
+export function isUserSuperAdmin(user: any): boolean {
+  if (!user) return false;
+  return user.email === "enesiobahia@gmail.com" || user.user_metadata?.role === "super_admin";
 }

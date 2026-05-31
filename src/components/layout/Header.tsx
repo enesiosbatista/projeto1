@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, Plus } from "lucide-react";
-import { useAuth } from "./AuthProvider";
+import { Bell, Plus, Shield } from "lucide-react";
+import { useAuth, isUserSuperAdmin } from "./AuthProvider";
 import { toast } from "sonner";
 
 export function Header() {
@@ -81,6 +81,16 @@ export function Header() {
           </button>
           {open && (
             <div className="absolute right-0 top-10 z-40 w-44 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 shadow-xl">
+              {isUserSuperAdmin(user) && (
+                <Link
+                  to="/admin"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-primary border-b border-zinc-800 transition hover:bg-zinc-800"
+                >
+                  <Shield size={14} className="text-primary" />
+                  Painel Admin
+                </Link>
+              )}
               <Link
                 to="/profile"
                 onClick={() => setOpen(false)}

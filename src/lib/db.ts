@@ -349,3 +349,196 @@ export async function saveRecreation(
     return { error, data };
   }
 }
+
+/**
+ * SUPER ADMINISTRATOR FUNCTIONS
+ */
+export async function getAllSystemProfiles(): Promise<any[]> {
+  if (isDummySupabase) {
+    const storedUsers = JSON.parse(localStorage.getItem("viralmind_registered_users") || "[]");
+    const profiles = storedUsers.map((u: any) => ({
+      id: u.user.id,
+      username: u.user.user_metadata?.name || u.email.split("@")[0] || "Criador",
+      email: u.email,
+      plan: u.user.user_metadata?.plan || "free",
+      credits: u.user.user_metadata?.credits ?? 5,
+      created_at: u.user.created_at || new Date().toISOString(),
+      niche: u.user.user_metadata?.niche || "Não informado",
+    }));
+
+    // If empty, add mock admin and mock users so there is data to display
+    if (profiles.length === 0) {
+      profiles.push({
+        id: "super-admin-uid-999",
+        username: "Enesio Batista",
+        email: "enesiobahia@gmail.com",
+        plan: "Super Admin",
+        credits: 9999,
+        created_at: new Date().toISOString(),
+        niche: "Tecnologia",
+      });
+      profiles.push({
+        id: "mock-user-1",
+        username: "João Silva",
+        email: "joao@email.com",
+        plan: "free",
+        credits: 3,
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        niche: "Finanças",
+      });
+      profiles.push({
+        id: "mock-user-2",
+        username: "Maria Souza",
+        email: "maria@email.com",
+        plan: "pro",
+        credits: 25,
+        created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+        niche: "Saúde & Fitness",
+      });
+    }
+    return profiles;
+  } else {
+    // Select all profiles in the table
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching all system profiles", error);
+      return [];
+    }
+    return data || [];
+  }
+}
+
+export async function getAllSystemAnalyses(): Promise<Analysis[]> {
+  if (isDummySupabase) {
+    const allAnalyses: Analysis[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith("viralmind_analyses_")) {
+        try {
+          const analyses = JSON.parse(localStorage.getItem(key) || "[]");
+          if (Array.isArray(analyses)) {
+            allAnalyses.push(...analyses);
+          }
+        } catch (e) {
+          console.error("Error parsing analyses in localStorage key " + key, e);
+        }
+      }
+    }
+    // If no user analyses yet, return the comprehensive high-fidelity mock list
+    if (allAnalyses.length === 0) {
+      const { mockAnalysisList } = await import("./mockData");
+      return mockAnalysisList;
+    }
+    return allAnalyses.sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+  } else {
+    const { data, error } = await supabase
+      .from("analyses")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching all system analyses", error);
+      return [];
+    }
+    return (data || []) as Analysis[];
+  }
+}
+
+export async function adminUpdateUserCredits(
+  targetUserId: string,
+  newCredits: number,
+): Promise<{ error: any }> {
+  if (isDummySupabase) {
+    const storedUsers = JSON.parse(localStorage.getItem("viralmind_registered_users") || "[]");
+    const userIndex = storedUsers.findIndex((u: any) => u.user.id === targetUserId);
+
+    if (userIndex !== -1) {
+      const updatedUser = {
+        ...storedUsers[userIndex].user,
+        user_metadata: {
+          ...storedUsers[userIndex].user.user_metadata,
+          credits: newCredits,
+        },
+      };
+      storedUsers[userIndex].user = updatedUser;
+      localStorage.setItem("viralmind_registered_users", JSON.stringify(storedUsers));
+
+      const currentUserStr = localStorage.getItem("viralmind_user");
+      if (currentUserStr) {
+        const currentUser = JSON.parse(currentUserStr);
+        if (currentUser.id === targetUserId) {
+          localStorage.setItem("viralmind_user", JSON.stringify(updatedUser));
+          const sessionStr = localStorage.getItem("viralmind_session");
+          if (sessionStr) {
+            const session = JSON.parse(sessionStr);
+            localStorage.setItem(
+              "viralmind_session",
+              JSON.stringify({ ...session, user: updatedUser }),
+            );
+          }
+        }
+      }
+      return { error: null };
+    }
+    return { error: { message: "User not found" } };
+  } else {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ credits: newCredits })
+      .eq("id", targetUserId);
+    return { error };
+  }
+}
+
+export async function adminUpdateUserPlan(
+  targetUserId: string,
+  newPlan: string,
+): Promise<{ error: any }> {
+  if (isDummySupabase) {
+    const storedUsers = JSON.parse(localStorage.getItem("viralmind_registered_users") || "[]");
+    const userIndex = storedUsers.findIndex((u: any) => u.user.id === targetUserId);
+
+    if (userIndex !== -1) {
+      const updatedUser = {
+        ...storedUsers[userIndex].user,
+        user_metadata: {
+          ...storedUsers[userIndex].user.user_metadata,
+          plan: newPlan,
+        },
+      };
+      storedUsers[userIndex].user = updatedUser;
+      localStorage.setItem("viralmind_registered_users", JSON.stringify(storedUsers));
+
+      const currentUserStr = localStorage.getItem("viralmind_user");
+      if (currentUserStr) {
+        const currentUser = JSON.parse(currentUserStr);
+        if (currentUser.id === targetUserId) {
+          localStorage.setItem("viralmind_user", JSON.stringify(updatedUser));
+          const sessionStr = localStorage.getItem("viralmind_session");
+          if (sessionStr) {
+            const session = JSON.parse(sessionStr);
+            localStorage.setItem(
+              "viralmind_session",
+              JSON.stringify({ ...session, user: updatedUser }),
+            );
+          }
+        }
+      }
+      return { error: null };
+    }
+    return { error: { message: "User not found" } };
+  } else {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ plan: newPlan })
+      .eq("id", targetUserId);
+    return { error };
+  }
+}
+

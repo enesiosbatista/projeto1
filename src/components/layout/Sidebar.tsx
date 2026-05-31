@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Home, LayoutDashboard, Search, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, Home, LayoutDashboard, Search, Zap, Shield } from "lucide-react";
 import { mockAnalysisList } from "@/lib/mockData";
-import { useAuth } from "./AuthProvider";
+import { useAuth, isUserSuperAdmin } from "./AuthProvider";
 import { getAnalyses } from "@/lib/db";
 
 const nav: { to: string; label: string; icon: typeof Home; exact?: boolean }[] = [
@@ -62,6 +62,10 @@ export function Sidebar() {
 
   const recents = userAnalyses.length > 0 ? userAnalyses.slice(0, 3) : mockAnalysisList.slice(0, 3);
 
+  const visibleNav = isUserSuperAdmin(user)
+    ? [...nav, { to: "/admin", label: "Painel Admin", icon: Shield }]
+    : nav;
+
   return (
     <aside
       className={`hidden shrink-0 flex-col border-r border-zinc-800 bg-zinc-950 transition-all duration-200 md:flex ${
@@ -87,7 +91,7 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex flex-col gap-1 p-2">
-        {nav.map(({ to, label, icon: Icon, exact }) => {
+        {visibleNav.map(({ to, label, icon: Icon, exact }) => {
           const active = exact ? pathname === to : pathname.startsWith(to);
           return (
             <Link

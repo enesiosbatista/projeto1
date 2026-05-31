@@ -8,14 +8,25 @@ import { BottomNav } from "./BottomNav";
 import { Loader2 } from "lucide-react";
 
 export function AppLayout({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate({ to: "/login" });
+    if (!loading) {
+      if (!user) {
+        navigate({ to: "/login" });
+      } else if (
+        user.user_metadata?.plan === "banned" ||
+        user.user_metadata?.role === "banned"
+      ) {
+        import("sonner").then(({ toast }) => {
+          toast.error("Sua conta foi suspensa temporariamente ou banida por violação dos Termos de Uso.");
+        });
+        signOut();
+        navigate({ to: "/login" });
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, signOut]);
 
   if (loading) {
     return (

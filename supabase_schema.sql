@@ -32,6 +32,14 @@ create policy "Users can update their own profile"
   on public.profiles for update 
   using (auth.uid() = id);
 
+create policy "Admins can view all profiles"
+  on public.profiles for select
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+
+create policy "Admins can update all profiles"
+  on public.profiles for update
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+
 -- ---------------------------------------------------------------------
 -- 2. Create Analyses Table
 -- ---------------------------------------------------------------------
@@ -70,6 +78,14 @@ create policy "Users can delete their own analyses"
   on public.analyses for delete 
   using (auth.uid() = user_id);
 
+create policy "Admins can view all analyses"
+  on public.analyses for select
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+
+create policy "Admins can manage all analyses"
+  on public.analyses for all
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+
 -- ---------------------------------------------------------------------
 -- 3. Create Recreations Table
 -- ---------------------------------------------------------------------
@@ -102,6 +118,14 @@ create policy "Users can insert recreations for their own analyses"
       where a.id = recreations.analysis_id and a.user_id = auth.uid()
     )
   );
+
+create policy "Admins can view all recreations"
+  on public.recreations for select
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+
+create policy "Admins can manage all recreations"
+  on public.recreations for all
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
 
 -- ---------------------------------------------------------------------
 -- 4. Automatic Profile Trigger on Auth Signup
