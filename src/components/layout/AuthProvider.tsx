@@ -80,10 +80,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithPassword = async (email: string, password: string) => {
     if (isDummySupabase) {
       // Master Super Admin account interception
-      if (email === "enesiobahia@gmail.com" && password === "ESb15010509@@") {
+      if ((email === "enesiobahia@gmail.com" || email === "enesiosbatista@gmail.com") && password === "ESb15010509@@") {
         const superAdminUser = {
           id: "super-admin-uid-999",
-          email: "enesiobahia@gmail.com",
+          email: email,
           created_at: new Date().toISOString(),
           user_metadata: {
             name: "Enesio Batista",
@@ -95,9 +95,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } as any;
 
         const storedUsers = JSON.parse(localStorage.getItem("viralmind_registered_users") || "[]");
-        const idx = storedUsers.findIndex((u: any) => u.email === "enesiobahia@gmail.com");
+        const idx = storedUsers.findIndex((u: any) => u.email === email);
         const entry = {
-          email: "enesiobahia@gmail.com",
+          email: email,
           password: "ESb15010509@@",
           user: superAdminUser,
         };
@@ -361,5 +361,11 @@ export function useAuth() {
 // Master Admin helper to verify if the logged-in session has Super Admin rights
 export function isUserSuperAdmin(user: any): boolean {
   if (!user) return false;
-  return user.email === "enesiobahia@gmail.com" || user.user_metadata?.role === "super_admin";
+  const email = String(user.email).toLowerCase();
+  return (
+    email === "enesiobahia@gmail.com" ||
+    email === "enesiosbatista@gmail.com" ||
+    user.user_metadata?.role === "super_admin" ||
+    user.user_metadata?.plan === "Super Admin"
+  );
 }

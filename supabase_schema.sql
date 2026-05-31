@@ -34,11 +34,11 @@ create policy "Users can update their own profile"
 
 create policy "Admins can view all profiles"
   on public.profiles for select
-  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com' or auth.jwt() ->> 'email' = 'enesiosbatista@gmail.com' or (auth.jwt() -> 'user_metadata' ->> 'role') = 'super_admin');
 
 create policy "Admins can update all profiles"
   on public.profiles for update
-  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com' or auth.jwt() ->> 'email' = 'enesiosbatista@gmail.com' or (auth.jwt() -> 'user_metadata' ->> 'role') = 'super_admin');
 
 -- ---------------------------------------------------------------------
 -- 2. Create Analyses Table
@@ -80,11 +80,11 @@ create policy "Users can delete their own analyses"
 
 create policy "Admins can view all analyses"
   on public.analyses for select
-  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com' or auth.jwt() ->> 'email' = 'enesiosbatista@gmail.com' or (auth.jwt() -> 'user_metadata' ->> 'role') = 'super_admin');
 
 create policy "Admins can manage all analyses"
   on public.analyses for all
-  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com' or auth.jwt() ->> 'email' = 'enesiosbatista@gmail.com' or (auth.jwt() -> 'user_metadata' ->> 'role') = 'super_admin');
 
 -- ---------------------------------------------------------------------
 -- 3. Create Recreations Table
@@ -121,11 +121,11 @@ create policy "Users can insert recreations for their own analyses"
 
 create policy "Admins can view all recreations"
   on public.recreations for select
-  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com' or auth.jwt() ->> 'email' = 'enesiosbatista@gmail.com' or (auth.jwt() -> 'user_metadata' ->> 'role') = 'super_admin');
 
 create policy "Admins can manage all recreations"
   on public.recreations for all
-  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com');
+  using (auth.jwt() ->> 'email' = 'enesiobahia@gmail.com' or auth.jwt() ->> 'email' = 'enesiosbatista@gmail.com' or (auth.jwt() -> 'user_metadata' ->> 'role') = 'super_admin');
 
 -- ---------------------------------------------------------------------
 -- 4. Automatic Profile Trigger on Auth Signup
