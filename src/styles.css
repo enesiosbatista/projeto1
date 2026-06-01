@@ -64,16 +64,16 @@
   --popover: #0c0d0c;
   --popover-foreground: #fafafa;
 
-  --primary: #a3e635;
-  --primary-foreground: #000000;
+  --primary: #006C4C;
+  --primary-foreground: #ffffff;
 
-  --secondary: #4ade80;
+  --secondary: #62B55A;
   --secondary-foreground: #000000;
 
-  --accent: #bef264;
+  --accent: #62B55A;
   --accent-foreground: #000000;
 
-  --muted: #1b1d1b;
+  --muted: #121612;
   --muted-foreground: #a1a1aa;
   --text-muted: #52525b;
 
@@ -81,18 +81,18 @@
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
 
-  --border: #222922;
-  --input: #151815;
-  --ring: #a3e635;
+  --border: #141c14;
+  --input: #080d08;
+  --ring: #006C4C;
 
-  --sidebar: #050505;
+  --sidebar: #040504;
   --sidebar-foreground: #fafafa;
-  --sidebar-primary: #a3e635;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: #151815;
+  --sidebar-primary: #006C4C;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #0c120c;
   --sidebar-accent-foreground: #fafafa;
-  --sidebar-border: #222922;
-  --sidebar-ring: #a3e635;
+  --sidebar-border: #141c14;
+  --sidebar-ring: #006C4C;
 }
 
 @layer base {
@@ -127,7 +127,7 @@
 
 @layer utilities {
   .text-gradient-viral {
-    background: linear-gradient(90deg, #a3e635 0%, #10b981 100%);
+    background: linear-gradient(90deg, #006C4C 0%, #62B55A 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
